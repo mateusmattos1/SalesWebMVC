@@ -8,6 +8,7 @@ using SalesWebMVC.Services;
 using SalesWebMVC.Models.ViewModels;
 using SalesWebMVC.Services.Exceptions;
 using System.Diagnostics;
+using SalesWebMvc.Services.Exceptions;
 
 namespace SalesWebMVC.Controllers
 {
@@ -67,8 +68,15 @@ namespace SalesWebMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            await _sellerService.RemoveAsync(id);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _sellerService.RemoveAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (IntegrityException e)
+            {
+                return RedirectToAction(nameof(Error), new { message = e.Message });
+            }
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -109,7 +117,7 @@ namespace SalesWebMVC.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var departments =await _departmentService.FindAllAsync();
+                var departments = await _departmentService.FindAllAsync();
                 var viewModel = new SellerFormViewModel { Seller = seller, Departments = departments };
                 return View(viewModel);
             }
