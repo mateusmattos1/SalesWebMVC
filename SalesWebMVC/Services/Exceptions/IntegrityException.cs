@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SalesWebMvc.Services.Exceptions
+namespace SalesWebMVC.Services.Exceptions
 {
     public class IntegrityException : ApplicationException
     {
